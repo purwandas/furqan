@@ -68,7 +68,7 @@
         }
     });
 
-	$( ".user-menu" ).find('.nav-link').click();
+	// $( ".user-menu" ).find('.nav-link').click();
 	
 	@stack('js-code')
 

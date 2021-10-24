@@ -959,6 +959,7 @@ if(!function_exists('getConfigMenu')){
 	function getConfigMenu($type) {
 		if ($type == 'icon') {
 	        $configIcon = [];
+			$configIcon['profile']    = "fas fa-user";
 			$configIcon['user']       = "fas fa-users-cog";
 			$configIcon['role']       = "fas fa-address-card";
 			$configIcon['category']   = "far fa-caret-square-right";

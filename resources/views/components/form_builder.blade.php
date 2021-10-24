@@ -56,6 +56,14 @@ $classRow      = ['class'=>'row'];
 		removeArrayByKey($rules, array_keys($custom));
 
 		$rules = array_merge($rules, $custom);
+		if (@$customOrder) {
+			$tmpRules = $rules;
+			$rules = [];
+			foreach ($customOrder as $key => $value) {
+				if (array_key_exists($value, $tmpRules))
+					$rules[$value] = $tmpRules[$value];
+			}
+		}
 	    @endphp
 		
 		@foreach($rules as $key => $value)
@@ -532,7 +540,8 @@ $classRow      = ['class'=>'row'];
                     }
                 });
             }else{
-                setSelect2IfPatch($("#"+elementId), value[0], value[1]);
+            	if(value[0])
+	                setSelect2IfPatch($("#"+elementId), value[0], value[1]);
             }
         } else if (type == 'select2Checkbox') {
             $.each(value, function(key, val){

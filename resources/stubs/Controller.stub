@@ -19,13 +19,13 @@ class {{modelName}}Controller extends Controller
 {
     use ApiController;
 
-    public $type, $label = "{{modelTitle}}";
+    public $type, $label = "{{modelTitle}}", $icon = 'fa fa-user-md';
 
     public function index()
     {
         $data = [
             'title' => $this->label,
-            'icon'  => 'fa fa-user-md',
+            'icon'  => $this->icon,
             'breadcrumb' => [
                 ['label' => $this->label],
             ]
@@ -99,7 +99,7 @@ class {{modelName}}Controller extends Controller
         try{
             ${{modelNameSingularLowerCase}} = DB::transaction(function () use ($request, $id) {
                 ${{modelNameSingularLowerCase}} = {{modelName}}::findOrFail($id);
-                ${{modelNameSingularLowerCase}}->fillAndValidate()->save();
+                ${{modelNameSingularLowerCase}}->fillAndValidateUpdate()->save();
                 return ${{modelNameSingularLowerCase}};
             });
         }catch(\Exception $ex){

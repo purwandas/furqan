@@ -286,6 +286,18 @@ class FormBuilderHelper
 		throw new \Exception("Form Builder must be used");
 	}
 
+	public function setCustomOrderFormBuilder($v = [])
+	{
+		$config = $this->getGlobalConfig();
+		if($config['useFormBuilder']){
+			$config['setupFormBuilder']['customOrder'] = $v;
+			$this->config = $config;
+			return $this->getRecentArray();
+		}
+
+		throw new \Exception("Form Builder must be used");
+	}
+
 	public function setExceptFormBuilderColumns($v = [])
 	{
 		$config = $this->getGlobalConfig();
