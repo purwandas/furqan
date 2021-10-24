@@ -1,7 +1,8 @@
 <?php
 use App\Http\Helpers\S3Upload;
-use App\Jobs\UniversalJob;
 use App\JobTrace;
+use App\Jobs\UniversalJob;
+use App\Models\Role;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -976,26 +977,23 @@ if(!function_exists('getConfigMenu')){
 	function getConfigMenu($type) {
 		if ($type == 'icon') {
 	        $configIcon = [];
-			$configIcon['profile']    = "fas fa-user";
-			$configIcon['user']       = "fas fa-users-cog";
-			$configIcon['role']       = "fas fa-address-card";
-			$configIcon['category']   = "far fa-caret-square-right";
-			$configIcon['product']    = "fas fa-file-medical";
-			$configIcon['production'] = "fas fa-industry";
-			$configIcon['supplier']   = "fab fa-supple";
+			$configIcon['profile']  = "fas fa-user";
+			$configIcon['user']     = "fas fa-users-cog";
+			$configIcon['role']     = "fas fa-address-card";
+			$configIcon['password'] = "fas fa-lock";
+			$configIcon['province'] = "fas fa-map-marker";
+			$configIcon['city']     = "fas fa-map-marker-alt";
 
 		    return $configIcon;
 		}
 
 		if ($type == 'separator') {
 		    $configSeparator = [];
-			if (\Auth::user()->role_id != 1) {
+			if (\Auth::user()->role_id != Role::ADMIN) {
 				$configSeparator['category'] = "MASTER DATA";
 			} else {
 				$configSeparator['role']     = "MASTER DATA";
 			}
-			$configSeparator['sales']      = "REPORT";
-			$configSeparator['sales-form'] = "TRANSACTION";
 		    return $configSeparator;
 		}
 
@@ -1007,9 +1005,7 @@ if(!function_exists('getConfigMenu')){
 
 		if ($type == 'text') {
 		    $configLabel = [];
-			$configLabel['role']          = "Permission";
-			$configLabel['sales-form']    = "Sales";
-			$configLabel['purchase-form'] = "Purchase";
+			$configLabel['role'] = "Permission";
 		    return $configLabel;
 		}
     }
