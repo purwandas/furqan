@@ -70,17 +70,7 @@ class UserController extends Controller
 
         if (! ($user->role_id == Role::ADMIN) ){
 
-            $customFormBuilder['role_id'] = [
-                'type'      => 'select2',
-                'value'     => [$user->role_id, $user->role->name],
-                'name'      => 'role_id',
-                'text'      => 'obj.name',
-                'options'   => 'role.select2',
-                'keyTerm'   => '_name',
-                'elOptions' => [
-                    'placeholder' => 'Permission',
-                ]
-            ];
+            $exceptColumn = array_merge($exceptColumn, ['role_id']);
 
             $customFormBuilder['city_id'] = [
                 'type'      => 'select2',
@@ -107,7 +97,7 @@ class UserController extends Controller
                     ->setFormPage(true)
                     ->useModal(false)
                     ->useDatatable(false)
-                    ->redirectRoute(route('profile.index'))
+                    ->setFormRedirectRoute(route('profile.index'))
                     ->setExceptFormBuilderColumns($exceptColumn)
                     ->setCustomFormBuilder($customFormBuilder)
                     ->setCustomOrderFormBuilder($customOrder)
@@ -171,7 +161,7 @@ class UserController extends Controller
                     ->setFormPage(true)
                     ->useModal(false)
                     ->useDatatable(false)
-                    ->redirectRoute(route('password.index'))
+                    ->setFormRedirectRoute(route('password.index'))
                     ->setExceptFormBuilderColumns($exceptColumn)
                     ->setCustomFormBuilder($customFormBuilder)
                     ->get();
