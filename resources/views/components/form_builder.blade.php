@@ -10,6 +10,7 @@ $name          = $name ?? @$model::toKey()['snake'];
 $class         = $class ?? @$model::toKey()['class'];
 $exceptForeign = @$exceptForeign ?? [];
 $classRow      = ['class'=>'row'];
+$route         = @$customRoute ?? (!isset($model->id) ? [$model::toKey()['route'].".create"] : [ $model::toKey()['route'].".edit" ,['id' => $model->id] ]);
 $redirectRoute = @$redirectRoute ?? route($model::toKey()['route'].'.index')
 @endphp
 
@@ -41,7 +42,7 @@ $redirectRoute = @$redirectRoute ?? route($model::toKey()['route'].'.index')
 <div class="col-lg-12">
 
 	@if(!isset($standalone) || !$standalone)
-	{!! Form::model($model, array_merge(['route' => !isset($model->id) ? [$model::toKey()['route'].".create"] : [ $model::toKey()['route'].".edit" ,['id' => $model->id] ] ,'files' => true, 'id' => 'form'.$model::toKey()['class']], $classRow)) !!}
+	{!! Form::model($model, array_merge(['route' => $route ,'files' => true, 'id' => 'form'.$model::toKey()['class']], $classRow)) !!}
 	@else
 	{!! Form::open(array_merge(['route' => $route,'files' => true], $classRow)) !!}
 	@endif
@@ -451,7 +452,7 @@ $redirectRoute = @$redirectRoute ?? route($model::toKey()['route'].'.index')
         clear{{$model::toKey()['class']}}Input();
         @endif
 
-        $('#form{{$model::toKey()['class']}}').prop('action',url);
+        $('#form{{$model::toKey()['class']}}').prop('action', '{{ @$customRoute ? route($customRoute[0]) : 'url' }}');
         $('#form{{$model::toKey()['class']}}').append('<input type="hidden" name="_method" value="PUT" id="_method">');
 
         $.ajax({

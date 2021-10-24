@@ -149,8 +149,7 @@ class FormBuilderHelper
 	{
 		$config = $this->getGlobalConfig();
 		if($config['useFormBuilder']){
-			$config['setupFormBuilder']['standalone'] = true;
-			$config['setupFormBuilder']['route'] = $v;
+			$config['setupFormBuilder']['customRoute'] = [$v];
 			$this->config = $config;
 			return $this->getRecentArray();
 		}
