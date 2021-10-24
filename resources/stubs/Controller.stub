@@ -90,7 +90,7 @@ class {{modelName}}Controller extends Controller
 
     public function detail($id)
     {
-        ${{modelNameSingularLowerCase}} = {{modelName}}::{{defaultJoin}}{{defaultSelect}}findOrFail($id);
+        ${{modelNameSingularLowerCase}} = {{modelName}}::generateQuery()->findOrFail($id);
         return $this->sendResponse(${{modelNameSingularLowerCase}}, 'Get Data Success!');
     }
 

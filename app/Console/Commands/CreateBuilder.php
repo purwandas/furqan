@@ -424,8 +424,6 @@ class CreateBuilder extends Command
                 '{{modelNameSpace}}',
                 '{{headerColumn}}',
                 '{{columnName}}',
-                '{{defaultJoin}}',
-                '{{defaultSelect}}',
                 '{{orientation}}'
             ],
             [
@@ -433,8 +431,6 @@ class CreateBuilder extends Command
                 $model,
                 $cPdf['header'],
                 $cPdf['columns'],
-                $defEloquent['join'],
-                $defEloquent['select'],
                 $orientation
             ],
             $this->getStub('ExportPdf')
