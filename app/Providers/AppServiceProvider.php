@@ -55,7 +55,7 @@ class AppServiceProvider extends ServiceProvider
         FormFacade::component('select2MultipleInput', 'components.form.select2_multiple_input', ['name', 'value' => [], 'options' => [], 'attributes']);
 
         $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
-            $menu = MenuBuilderHelper::getMenu(\Auth::user()->role->code);
+            $menu = MenuBuilderHelper::getMenu(@\Auth::user()->role->code);
             foreach ($menu as $key => $value) {
                 $var = $value;
                 if (array_key_exists($value['key'], getConfigMenu('icon'))) {

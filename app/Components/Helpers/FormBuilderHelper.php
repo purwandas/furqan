@@ -133,12 +133,16 @@ class FormBuilderHelper
 		return $this->getRecentArray();
 	}
 
-	public function redirectRoute($v)
+	public function setFormRedirectRoute($v)
 	{
 		$config = $this->getGlobalConfig();
-		$config['redirectRoute'] = $v;
-		$this->config = $config;
-		return $this->getRecentArray();
+		if($config['useFormBuilder']){
+			$config['setupFormBuilder']['redirectRoute'] = $v;
+			$this->config = $config;
+			return $this->getRecentArray();
+		}
+
+		throw new \Exception("Form Builder must be used");
 	}
 
 	public function disableInfo($value = false)

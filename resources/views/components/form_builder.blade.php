@@ -65,6 +65,8 @@ $redirectRoute = @$redirectRoute ?? route($model::toKey()['route'].'.index')
 					$rules[$value] = $tmpRules[$value];
 			}
 		}
+
+		$setFocus = '';
 	    @endphp
 		
 		@foreach($rules as $key => $value)
@@ -139,7 +141,10 @@ $redirectRoute = @$redirectRoute ?? route($model::toKey()['route'].'.index')
 			$attributes['elOptions'] = $elOptions->toArray();
 			
 			$inputType = $type.'Input';
-			
+
+			if (empty($setFocus)) {
+				$setFocus = "$('#".$custom[$key]['elOptions']['id']."').focus();";
+			}
 
 			// Form Section START
 				switch ($type) {
@@ -466,6 +471,7 @@ $redirectRoute = @$redirectRoute ?? route($model::toKey()['route'].'.index')
                 {!!@$onEdit!!}
 		        setTimeout(function() {
 			        {!!@$onEdit2!!}
+			        {!!@$setFocus!!}
 		        }, 500);
 		        if (typeof dataEdit !== "undefined") {
 		        	dataEdit = data;
