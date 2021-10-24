@@ -133,6 +133,14 @@ class FormBuilderHelper
 		return $this->getRecentArray();
 	}
 
+	public function redirectRoute($v)
+	{
+		$config = $this->getGlobalConfig();
+		$config['redirectRoute'] = $v;
+		$this->config = $config;
+		return $this->getRecentArray();
+	}
+
 	public function disableInfo($value = false)
 	{
 		$config = $this->getGlobalConfig();

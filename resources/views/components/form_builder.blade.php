@@ -10,6 +10,7 @@ $name          = $name ?? @$model::toKey()['snake'];
 $class         = $class ?? @$model::toKey()['class'];
 $exceptForeign = @$exceptForeign ?? [];
 $classRow      = ['class'=>'row'];
+$redirectRoute = @$redirectRoute ?? route($model::toKey()['route'].'.index')
 @endphp
 
 @if($useModal)
@@ -358,7 +359,7 @@ $classRow      = ['class'=>'row'];
                 }).then(function(result){
 		            if (result.value) {
 		                @if(!$useModal)
-		                	window.location.href = '{{ route($model::toKey()['route'].'.index') }}';
+		                	window.location.href = '{{ $redirectRoute }}';
 		                @else
 			                @if(empty($customVariables['id']) || !isset($customVariables['id']))
 
