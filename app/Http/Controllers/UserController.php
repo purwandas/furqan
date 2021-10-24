@@ -49,7 +49,7 @@ class UserController extends Controller
         return view('components.global_form', $final);
     }
 
-    public function updateProfile()
+    public function formProfile()
     {
         $user = \Auth::user();
 
@@ -97,7 +97,8 @@ class UserController extends Controller
                     ->setFormPage(true)
                     ->useModal(false)
                     ->useDatatable(false)
-                    ->setFormRedirectRoute(route('profile.index'))
+                    ->setCustomActionRoute('profile.edit')
+                    ->setFormRedirectRoute('profile.index')
                     ->setExceptFormBuilderColumns($exceptColumn)
                     ->setCustomFormBuilder($customFormBuilder)
                     ->setCustomOrderFormBuilder($customOrder)
@@ -107,7 +108,7 @@ class UserController extends Controller
         return view('components.global_form', $final);
     }
 
-    public function updatePassword()
+    public function formPassword()
     {
         $user = \Auth::user();
 
@@ -161,7 +162,8 @@ class UserController extends Controller
                     ->setFormPage(true)
                     ->useModal(false)
                     ->useDatatable(false)
-                    ->setFormRedirectRoute(route('password.index'))
+                    ->setCustomActionRoute('password.edit')
+                    ->setFormRedirectRoute('password.index')
                     ->setExceptFormBuilderColumns($exceptColumn)
                     ->setCustomFormBuilder($customFormBuilder)
                     ->get();
@@ -264,6 +266,63 @@ class UserController extends Controller
                     $user->fillAndValidateUpdate()->save();
 
                 }
+                return $user;
+            });
+        }catch(\Exception $ex){
+            return $this->sendError('Update Data Error!', $ex, 500);
+        }
+
+        if (array_key_exists('success', $user)) {
+            return $user['response'];
+        }
+
+        return $this->sendResponse($user, 'Update Data Success!');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        try{
+            $user = DB::transaction(function () use ($request) {
+
+                $user = \Auth::user();
+
+                    if (empty($request['password'])) {
+                        unset($request['password']);
+                    } else {
+                        $request['password'] = bcrypt($request['password']);
+                    }
+
+                    $user->fillAndValidateUpdate()->save();
+
+                return $user;
+            });
+        }catch(\Exception $ex){
+            return $this->sendError('Update Data Error!', $ex, 500);
+        }
+
+        return $this->sendResponse($user, 'Update Data Success!');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        try{
+            $user = DB::transaction(function () use ($request) {
+
+                $user = \Auth::user();
+
+                    
+                    $this->validateRequest($request->all(),[
+                        'password'     => 'required|string',
+                        'new_password' => 'required|string|confirmed',
+                    ]);
+
+                    if (Hash::check($request->password, $user->password)) {
+                        $user->password = bcrypt($request['new_password']);
+                        $user->save();
+                    } else {
+                        return ['success' => false, 'response' => $this->sendError('Current Password was wrong!', null, 500)];
+                    }
+
                 return $user;
             });
         }catch(\Exception $ex){

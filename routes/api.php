@@ -26,6 +26,12 @@ Route::group(['prefix' => 'job-trace','middleware' => ['auth:api']], function() 
 	Route::post('province/select2', 'ProvinceController@select2')->name('province.select2');
 	Route::post('city/select2', 'CityController@select2')->name('city.select2');
 
+	Route::group(['middleware' => ['auth:api']], function() {
+		Route::put('update-profile', 'UserController@updateProfile')->name('profile.edit');
+		Route::put('update-password', 'UserController@updatePassword')->name('password.edit');
+	});
+
+
 Route::group(['prefix' => 'role','middleware' => ['auth:api']], function() {
 	Route::get('', 'RoleController@list')->name('role.list');
 	Route::post('', 'RoleController@store')->name('role.create');
