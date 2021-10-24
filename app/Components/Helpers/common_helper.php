@@ -457,6 +457,23 @@ if(!function_exists('removeArrayByKey')){
     }
 }
 
+if(!function_exists('removeArrayByValue')){
+    function removeArrayByValue(&$array, $values){
+
+    	if (!is_array($values))
+    		$values = [$values];
+
+    	foreach ($values as $key => $value) {
+
+	    	if (($key = array_search($value, $array)) !== false) {
+			    unset($array[$key]);
+			}
+
+    	}
+
+	}
+}
+
 if(!function_exists('generateTextRule')){
 	function generateTextRule($columns, $rules, $modelNameSpace, $exceptForeign = [])
 	{

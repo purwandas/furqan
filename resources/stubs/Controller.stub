@@ -99,7 +99,7 @@ class {{modelName}}Controller extends Controller
         try{
             ${{modelNameSingularLowerCase}} = DB::transaction(function () use ($request, $id) {
                 ${{modelNameSingularLowerCase}} = {{modelName}}::findOrFail($id);
-                ${{modelNameSingularLowerCase}}->fillAndValidateUpdate()->save();
+                ${{modelNameSingularLowerCase}}->fillAndValidate($request->all(), {{modelName}}::ruleUpdate())->save();
                 return ${{modelNameSingularLowerCase}};
             });
         }catch(\Exception $ex){

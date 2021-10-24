@@ -13,7 +13,16 @@ class {{modelName}} extends BaseModel
 
     public static function rule(){
         return [
-        	// Define rule here to display data on datatable and generate form builder
+            // Define rule here to display data on datatable and generate form builder
+            // Example : 'name' => 'required|string|min:8|max:10',
+            {{modelRules}}
+        ];
+    
+    }
+
+    public static function ruleUpdate(){
+        return [
+            // Define rule here to display data on datatable and generate form builder
             // Example : 'name' => 'required|string|min:8|max:10',
             {{modelRules}}
         ];

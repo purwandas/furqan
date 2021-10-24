@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 class MenuBuilderHelper
 {
 
-	public static function getMenu($config = [],$permission = [])
+	public static function getMenu($permission = 'all', $config = [])
 	{
 		$path = [];
 		if (count($path) == 0 ) {
@@ -16,17 +16,25 @@ class MenuBuilderHelper
 	            $route = $value->getName();
 	            $prefix = $value->getPrefix();
 	            if (Str::endsWith($route,"index") && !Str::startsWith($route,"passport")) {
+	            	
+	            	$middleware = $value->middleware();
+	            	removeArrayByValue($middleware, ['web','auth']);
+
+	            	if (($permission != 'all') && count($middleware) && !in_array($permission, $middleware)) {
+	            		continue;
+	            	}
+
 	                if (!empty($prefix)) {
-	                    $keys      = explode('/', ltrim($prefix,"/"));
-	                    $value     = $route;
-	                    $reference = &$path;
+						$keys      = explode('/', ltrim($prefix,"/"));
+						$val       = $route;
+						$reference = &$path;
 	                    foreach ($keys as $keyz) {
 	                        if (!array_key_exists($keyz, $reference)) {
 	                            $reference[$keyz] = [];
 	                        }
 	                        $reference = &$reference[$keyz];
 	                    }
-	                    $reference[] = $value;
+	                    $reference[] = $val;
 	                    unset($reference);
 	                } else {
 	                    $path[] = $route;
