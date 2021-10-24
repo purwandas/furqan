@@ -107,6 +107,7 @@ class UserController extends Controller
                     ->setFormPage(true)
                     ->useModal(false)
                     ->useDatatable(false)
+                    ->redirectRoute(route('profile.index'))
                     ->setExceptFormBuilderColumns($exceptColumn)
                     ->setCustomFormBuilder($customFormBuilder)
                     ->setCustomOrderFormBuilder($customOrder)
@@ -170,6 +171,7 @@ class UserController extends Controller
                     ->setFormPage(true)
                     ->useModal(false)
                     ->useDatatable(false)
+                    ->redirectRoute(route('password.index'))
                     ->setExceptFormBuilderColumns($exceptColumn)
                     ->setCustomFormBuilder($customFormBuilder)
                     ->get();

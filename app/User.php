@@ -43,7 +43,7 @@ class User extends Authenticatable implements JWTSubject
 
     public static function rule(){
         return [
-            'name'         => 'required|string|min:8|max:50',
+            'name'         => 'required|string|min:2|max:50',
             'email'        => 'required|email|sometimes|unique:users,email',
             'password'     => 'required',
             'phone_number' => 'required|numeric',
@@ -56,7 +56,7 @@ class User extends Authenticatable implements JWTSubject
 
     public static function ruleUpdate(){
         return [
-            'name'         => 'required|string|min:8|max:50',
+            'name'         => 'required|string|min:2|max:50',
             'email'        => 'required|email|sometimes',
             'password'     => 'nullable',
             'phone_number' => 'required|numeric',
