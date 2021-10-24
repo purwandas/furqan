@@ -137,7 +137,20 @@ class FormBuilderHelper
 	{
 		$config = $this->getGlobalConfig();
 		if($config['useFormBuilder']){
-			$config['setupFormBuilder']['redirectRoute'] = $v;
+			$config['setupFormBuilder']['redirectRoute'] = route($v);
+			$this->config = $config;
+			return $this->getRecentArray();
+		}
+
+		throw new \Exception("Form Builder must be used");
+	}
+
+	public function setCustomActionRoute($v)
+	{
+		$config = $this->getGlobalConfig();
+		if($config['useFormBuilder']){
+			$config['setupFormBuilder']['standalone'] = true;
+			$config['setupFormBuilder']['route'] = $v;
 			$this->config = $config;
 			return $this->getRecentArray();
 		}
