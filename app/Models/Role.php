@@ -13,6 +13,7 @@ class Role extends BaseModel
 
     const
         ADMIN       = 1,
+        GUEST       = 2,
         ADMIN_LABEL = 'Admin';
 
     public static function rule(){
