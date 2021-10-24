@@ -19,13 +19,13 @@ class RoleController extends Controller
 {
     use ApiController;
 
-    public $type, $label = "Role";
+    public $type, $label = "Permission", $icon = 'fa fa-user-md';
 
     public function index()
     {
         $data = [
             'title' => $this->label,
-            'icon'  => 'fa fa-user-md',
+            'icon'  => $this->icon,
             'breadcrumb' => [
                 ['label' => $this->label],
             ]
@@ -99,7 +99,7 @@ class RoleController extends Controller
         try{
             $role = DB::transaction(function () use ($request, $id) {
                 $role = Role::findOrFail($id);
-                $role->fillAndValidate()->save();
+                $role->fillAndValidateUpdate()->save();
                 return $role;
             });
         }catch(\Exception $ex){

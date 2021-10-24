@@ -9,23 +9,24 @@ use App\Components\Traits\ApiController;
 use App\Exports\UserExportPdf;
 use App\Exports\UserExportXls;
 use App\Imports\UserImport;
+use App\Models\Role;
 use App\Templates\UserImportSheetTemplate;
-use \App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use \App\User;
 
 class UserController extends Controller
 {
     use ApiController;
 
-    public $type, $label = "User";
+    public $type, $label = "User", $icon = 'fa fa-user-md';
 
     public function index()
     {
         $data = [
             'title' => $this->label,
-            'icon'  => 'fa fa-user-md',
+            'icon'  => $this->icon,
             'breadcrumb' => [
                 ['label' => $this->label],
             ]
@@ -37,15 +38,77 @@ class UserController extends Controller
                 'password' => [
                     'type' => 'password'
                 ],
-                'retype_password' => [
-                    'type' => 'password'
-                ]
             ])
             ->setExceptDatatableColumns(['password'])
             ->setExceptFilter(['password'])
             ->useUtilities(false)
             ->useFilter(false)
             ->get();
+        
+        return view('components.global_form', $final);
+    }
+
+    public function updateProfile()
+    {
+        $user = \Auth::user();
+
+        $label = 'Profile';
+        $data = [
+            'title' => $label,
+            'icon'  => $this->icon,
+            'breadcrumb' => [
+                ['label' => 'Update '.$label],
+            ],
+            'customVariables' => [
+                'id' => $user->id,
+            ],
+        ];
+
+        $customFormBuilder = [];
+        $exceptColumn      = [];
+
+        if (! ($user->role_id == Role::ADMIN) ){
+            $exceptColumn = ['password', 'role_id'];
+        } else {
+            $customFormBuilder['role_id'] = [
+                'type'      => 'select2',
+                'value'     => [Role::ADMIN, Role::ADMIN_LABEL],
+                'name'      => 'role_id',
+                'text'      => 'obj.name',
+                'options'   => 'role.select2',
+                'keyTerm'   => '_name',
+                'elOptions' => [
+                    'placeholder' => 'Permission',
+                ]
+            ];
+
+            $customFormBuilder['city_id'] = [
+                'type'      => 'select2',
+                'value'     => [$user->city_id, @$user->city->name],
+                'name'      => 'city_id',
+                'text'      => 'obj.name',
+                'options'   => 'city.select2',
+                'keyTerm'   => '_name',
+                'ajaxParams'   => ['province_id' => "$('#user_province_id').val()"],
+                'elOptions' => [
+                    'placeholder' => 'City',
+                    'required'    => 'required',
+                ]
+            ];
+        }
+
+        $customOrder = ['name', 'email', 'phone_number', 'password', 'province_id', 'city_id', 'role_id'];
+
+        $form_data = new FormBuilderHelper(User::class,$data);
+        $final     = $form_data
+                    ->setFormPage(true)
+                    ->useModal(false)
+                    ->useDatatable(false)
+                    ->setExceptFormBuilderColumns($exceptColumn)
+                    ->setCustomFormBuilder($customFormBuilder)
+                    ->setCustomOrderFormBuilder($customOrder)
+                    // ->injectView('inject/sales-form')
+                    ->get();
         
         return view('components.global_form', $final);
     }
@@ -96,12 +159,10 @@ class UserController extends Controller
     {
         try{
             $user = DB::transaction(function () use ($request) {
+                $request['password'] = bcrypt($request['password']);
 
-                if ($request->password != $request->retype_password) {
-                    return $this->sendError('Password did not match!', $ex, 500);
-                }
                 $user = new User;
-                $user->fillAndValidate($request->except(['retype_password']))->save();
+                $user->fillAndValidate()->save();
                 return $user;
             });
         }catch(\Exception $ex){
@@ -113,8 +174,10 @@ class UserController extends Controller
 
     public function detail($id)
     {
-        $user = User::join('roles', 'roles.id', 'users.role_id')
-			->select('users.*', 'roles.name as role_name')
+        $user = User::leftJoin('roles', 'roles.id', 'users.role_id')
+            ->leftJoin('provinces', 'provinces.id', 'users.province_id')
+            ->leftJoin('cities', 'cities.id', 'users.city_id')
+			->select('users.*', 'roles.name as role_name', 'provinces.name as province_name', 'cities.name as city_name')
 			->findOrFail($id);
         return $this->sendResponse($user, 'Get Data Success!');
     }
@@ -123,8 +186,15 @@ class UserController extends Controller
     {
         try{
             $user = DB::transaction(function () use ($request, $id) {
+
+                if (empty($request['password'])) {
+                    unset($request['password']);
+                } else {
+                    $request['password'] = bcrypt($request['password']);
+                }
+
                 $user = User::findOrFail($id);
-                $user->fillAndValidate($request->except(['retype_password']))->save();
+                $user->fillAndValidateUpdate()->save();
                 return $user;
             });
         }catch(\Exception $ex){

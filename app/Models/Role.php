@@ -9,7 +9,9 @@ class Role extends BaseModel
 {
     use SoftDeletes;
 
-    const MASTER_ADMIN = 1;
+    const
+        ADMIN       = 1,
+        ADMIN_LABEL = 'Admin';
 
     protected $guarded = [];
 
@@ -30,7 +32,7 @@ class Role extends BaseModel
 
     public function scopeNoMasterAdmin($query)
     {
-        $query->where(Role::getTable().'.id', '!=', Role::MASTER_ADMIN);
+        $query->where(Role::getTable().'.id', '!=', Role::ADMIN);
     }
 
 }

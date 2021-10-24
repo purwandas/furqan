@@ -20,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'role_id'
+        'name', 'email', 'password', 'phone_number', 'province_id', 'city_id', 'role_id'
     ];
 
     /**
@@ -43,20 +43,26 @@ class User extends Authenticatable implements JWTSubject
 
     public static function rule(){
         return [
-            'name' => 'required|string|min:8|max:50',
-            'email' => 'required|email|sometimes|unique:users,email',
-            'password' => 'required',
-            'role_id' => 'required|exists:roles,id',
+            'name'         => 'required|string|min:8|max:50',
+            'email'        => 'required|email|sometimes|unique:users,email',
+            'password'     => 'required',
+            'phone_number' => 'required|numeric',
+            'province_id'  => 'required|exists:provinces,id',
+            'city_id'      => 'required|exists:cities,id',
+            'role_id'      => 'nullable|exists:roles,id',
         ];
     
     }
 
     public static function ruleUpdate(){
         return [
-            'name' => 'required|string|min:8|max:50',
-            'email' => 'required|email|sometimes',
-            'password' => 'nullable',
-            'role_id' => 'required|exists:roles,id',
+            'name'         => 'required|string|min:8|max:50',
+            'email'        => 'required|email|sometimes',
+            'password'     => 'nullable',
+            'phone_number' => 'required|numeric',
+            'province_id'  => 'required|exists:provinces,id',
+            'city_id'      => 'required|exists:cities,id',
+            'role_id'      => 'nullable|exists:roles,id',
         ];
     
     }
@@ -69,6 +75,26 @@ class User extends Authenticatable implements JWTSubject
     public static function _role()
     {
         return '\\App\Models\Role';
+    }
+
+    public function province()
+    {
+        return $this->belongsTo($this->_province(), 'province_id');
+    }
+
+    public static function _province()
+    {
+        return '\\App\Models\Province';
+    }
+
+    public function city()
+    {
+        return $this->belongsTo($this->_city(), 'city_id');
+    }
+
+    public static function _city()
+    {
+        return '\\App\Models\City';
     }
 
     public static function toKey()
