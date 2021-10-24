@@ -39,18 +39,18 @@ class RoleController extends Controller
 
     public function list(RoleFilter $filter)
     {
-        $role = Role::filter($filter)->get();
+        $role = Role::generateQuery($filter)->get();
         return $this->sendResponse($role, 'Get Data Success!');
     }
 
     public function select2(RoleFilter $filter)
     {
-        return Role::filter($filter)->get();
+        return Role::generateQuery($filter)->get();
     }
 
     public function datatable(RoleFilter $filter)
     {
-        $data = Role::filter($filter);
+        $data = Role::generateQuery($filter);
 
         return \DataTables::of($data)
             ->addColumn('action', function ($data){
@@ -90,7 +90,7 @@ class RoleController extends Controller
 
     public function detail($id)
     {
-        $role = Role::findOrFail($id);
+        $role = Role::generateQuery()->findOrFail($id);
         return $this->sendResponse($role, 'Get Data Success!');
     }
 

@@ -26,7 +26,7 @@ class RoleExportXls implements FromCollection, WithHeadings, ShouldAutoSize, Wit
     public function collection()
     {
         $filter = new RoleFilter(new Request(self::$params));
-        return Role::filter($filter)->get();
+        return Role::generateQuery($filter)->get();
     }
 
     public function headings(): array

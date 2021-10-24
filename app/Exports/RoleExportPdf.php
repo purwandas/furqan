@@ -12,7 +12,7 @@ class RoleExportPdf
 	public static function print($params = [], $fileName)
 	{
 		$filter = new RoleFilter(new Request($params));
-		$data   = Role::filter($filter)->get();
+		$data   = Role::generateQuery($filter)->get();
 
 		dirExists($fileName);
 

@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Role extends BaseModel
 {
     use SoftDeletes;
+    
+    protected $guarded = [];
 
     const
         ADMIN       = 1,
         ADMIN_LABEL = 'Admin';
-
-    protected $guarded = [];
 
     public static function rule(){
         return [
@@ -30,9 +30,11 @@ class Role extends BaseModel
 		return ['name'];
 	}
 
-    public function scopeNoMasterAdmin($query)
-    {
-        $query->where(Role::getTable().'.id', '!=', Role::ADMIN);
-    }
 
+    public function scopeGenerateQuery($query, $filter = [])
+    {
+        $query->when(!empty($filter), function($q) use ($filter){
+                $q->filter($filter);
+            });
+    }
 }
