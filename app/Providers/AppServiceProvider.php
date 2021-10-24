@@ -54,35 +54,15 @@ class AppServiceProvider extends ServiceProvider
         FormFacade::component('selectTreeInput', 'components.form.select_tree_input', ['name', 'input', 'route', 'attributes' => []]);        
         FormFacade::component('select2MultipleInput', 'components.form.select2_multiple_input', ['name', 'value' => [], 'options' => [], 'attributes']);
 
-        // Event::listen(BuildingMenu::class, function (BuildingMenu $event) {
-        //     $menu = MenuBuilderHelper::getMenu();
-        //     foreach ($menu as $key => $value) {
-        //         dd($menu);
-        //         if (($value['key'] == 'role' || $value['key'] == 'user') && (\Auth::user()->role_id != 1)) {
-        //             continue;
-        //         }
-        //         $var = $value;
-        //         if (array_key_exists($value['key'], getConfigMenu('icon'))) {
-        //             $var['icon'] = getConfigMenu('icon')[$value['key']];
-        //         }
-        //         if (array_key_exists($value['key'], getConfigMenu('label'))) {
-        //             $var['label'] = getConfigMenu('label')[$value['key']];
-        //         }
-        //         if (array_key_exists($value['key'], getConfigMenu('text'))) {
-        //             $var['text'] = getConfigMenu('text')[$value['key']];
-        //         }
-        //         if (array_key_exists($value['key'], getConfigMenu('separator'))) {
-        //             $event->menu->add(getConfigMenu('separator')[$value['key']]);
-        //         }
-        //         $event->menu->add($var);
-        //     }
-        // });
         $events->listen(BuildingMenu::class, function (BuildingMenu $event) {
             $menu = MenuBuilderHelper::getMenu();
+                // dd($menu);
             foreach ($menu as $key => $value) {
                 if (($value['key'] == 'role' || $value['key'] == 'user') && (\Auth::user()->role_id != 1)) {
                     continue;
                 }
+
+
                 $var = $value;
                 if (array_key_exists($value['key'], getConfigMenu('icon'))) {
                     $var['icon'] = getConfigMenu('icon')[$value['key']];
@@ -96,6 +76,7 @@ class AppServiceProvider extends ServiceProvider
                 if (array_key_exists($value['key'], getConfigMenu('separator'))) {
                     $event->menu->add(getConfigMenu('separator')[$value['key']]);
                 }
+
                 $event->menu->add($var);
             }
         });

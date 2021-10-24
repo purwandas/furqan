@@ -35,6 +35,14 @@ if(isset($config['elOptions'])){
 	}
 }
 
+if (@$config['containerStyles']) {
+	$containerStyles = [];
+	foreach ($config['containerStyles'] as $key => $value) {
+		$containerStyles[] = $key.':'.$value;
+	}
+
+	$containerStyles = 'style='.implode(';', $containerStyles);
+}
 // FORMATTING TEXT BY TEMPLATE 
 // if (is_array($config['text'])) {
 // 	$text = null;
@@ -47,7 +55,7 @@ if(isset($config['elOptions'])){
 @endphp
 
 {{-- <div class='form-group {{ $config['useLabel'] ? '' : 'width-100' }} {{ !$errors->has($name) ?: 'has-error' }}'> --}}
-<div class='{{ @$config['containerClass'] ?? 'form-group row' }}'>
+<div class='{{ @$config['containerClass'] ?? 'form-group row' }}' {{@$containerStyles}}>
 	@if ($config['useLabel'])
 	{{-- <div class='row'> --}}
 		<label for="{!! @$elOptions['id'] ?? $name !!}" class="{{$labelContainerClass}}">{!! ucfirst($config['labelText'] ?? $name) !!}</label>
