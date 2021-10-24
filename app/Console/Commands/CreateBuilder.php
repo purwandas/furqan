@@ -209,7 +209,6 @@ class CreateBuilder extends Command
         $title = ucwords(str_replace('-', ' ', $route));
         $table = stringToTable( Str::snake($name) );
         $namespace    = $this->modelWithNamespace;
-        $defEloquent  = generateDefaultEloquent($this->modelWithNamespace, $name, $this->fields, $this->rules, $this->fExcept);
         $customHelper = generateCustomHelper($this->fExcept);
         $controllerTemplate = str_replace(
             [
@@ -219,8 +218,6 @@ class CreateBuilder extends Command
                 '{{modelTable}}',
                 '{{modelNameSpace}}',
                 '{{modelNameSingularLowerCase}}',
-                '{{defaultJoin}}',
-                '{{defaultSelect}}',
                 '{{customHelper}}'
             ],
             [
@@ -230,8 +227,6 @@ class CreateBuilder extends Command
                 $table,
                 $namespace,
                 lcfirst($name),
-                $defEloquent['join'],
-                $defEloquent['select'],
                 $customHelper
             ],
             $this->getStub('Controller')
@@ -243,7 +238,8 @@ class CreateBuilder extends Command
     protected function generateModel($name, $modelDir)
     {
         $dir = (!empty($modelDir) ? "\\".$modelDir : "");
-        $modelRules = generateTextRule($this->fields, $this->rules, $this->modelWithNamespace, $this->fExcept);
+        $modelRules  = generateTextRule($this->fields, $this->rules, $this->modelWithNamespace, $this->fExcept);
+        $defEloquent = generateDefaultEloquent($this->modelWithNamespace, $name, $this->fields, $this->rules, $this->fExcept);
 
         $rules    = $modelRules['rules'];
         $function = $modelRules['function'];
@@ -254,12 +250,16 @@ class CreateBuilder extends Command
                 '{{modelNameSpace}}',
                 '{{modelRules}}',
                 '{{modelFunction}}',
+                '{{defaultJoin}}',
+                '{{defaultSelect}}',
             ],
             [
                 $name,
                 $dir,
                 $rules,
-                $function
+                $function,
+                $defEloquent['join'],
+                $defEloquent['select'],
             ],
             $this->getStub('Model')
         );
@@ -395,10 +395,9 @@ class CreateBuilder extends Command
 
     protected function generateExportClass($name)
     {
-        $model       = $this->modelWithNamespace;
-        $defEloquent = generateDefaultEloquent($model, $name, $this->fields, $this->rules, $this->fExcept, true);
+        $model = $this->modelWithNamespace;
 
-    if(!is_dir(app_path("Exports"))) mkdir(app_path("Exports"));
+        if(!is_dir(app_path("Exports"))) mkdir(app_path("Exports"));
 
         $modelTemplate = str_replace(
             [
@@ -406,16 +405,12 @@ class CreateBuilder extends Command
                 '{{modelNameSpace}}',
                 '{{arrayColumn}}',
                 '{{headerColumn}}',
-                '{{defaultJoin}}',
-                '{{defaultSelect}}'
             ],
             [
                 $name,
                 $model,
                 toAssignedString($this->fields),
                 toColumnHeader($this->fields, $this->fExcept),
-                $defEloquent['join'],
-                $defEloquent['select'],
             ],
             $this->getStub('ExportXls')
         );

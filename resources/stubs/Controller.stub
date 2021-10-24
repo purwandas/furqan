@@ -39,18 +39,18 @@ class {{modelName}}Controller extends Controller
 
     public function list({{modelName}}Filter $filter)
     {
-        ${{modelNameSingularLowerCase}} = {{modelName}}::{{defaultJoin}}{{defaultSelect}}filter($filter)->get();
+        ${{modelNameSingularLowerCase}} = {{modelName}}::generateQuery($filter)->get();
         return $this->sendResponse(${{modelNameSingularLowerCase}}, 'Get Data Success!');
     }
 
     public function select2({{modelName}}Filter $filter)
     {
-        return {{modelName}}::{{defaultJoin}}{{defaultSelect}}filter($filter)->get();
+        return {{modelName}}::generateQuery($filter)->get();
     }
 
     public function datatable({{modelName}}Filter $filter)
     {
-        $data = {{modelName}}::{{defaultJoin}}{{defaultSelect}}filter($filter);
+        $data = {{modelName}}::generateQuery($filter);
 
         return \DataTables::of($data)
             ->addColumn('action', function ($data){

@@ -26,7 +26,7 @@ class {{modelName}}ExportXls implements FromCollection, WithHeadings, ShouldAuto
     public function collection()
     {
         $filter = new {{modelName}}Filter(new Request(self::$params));
-        return {{modelName}}::{{defaultJoin}}{{defaultSelect}}filter($filter)->get();
+        return {{modelName}}::generateQuery($filter)->get();
     }
 
     public function headings(): array
