@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -75,6 +76,7 @@ class RegisterController extends Controller
             'phone_number' => $data['phone_number'],
             'province_id'  => $data['province'],
             'city_id'      => $data['city'],
+            'role_id'      => Role::GUEST,
             'password'     => Hash::make($data['password']),
         ]);
         
