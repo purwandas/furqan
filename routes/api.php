@@ -22,6 +22,9 @@ Route::group(['prefix' => 'job-trace','middleware' => ['auth:api']], function() 
 	Route::post('datatable', 'UtilController@datatable')->name('job-trace.data');
 });
 
+	// GLOBAL
+	Route::post('province/select2', 'ProvinceController@select2')->name('province.select2');
+	Route::post('city/select2', 'CityController@select2')->name('city.select2');
 
 Route::group(['prefix' => 'role','middleware' => ['auth:api']], function() {
 	Route::get('', 'RoleController@list')->name('role.list');
@@ -47,4 +50,28 @@ Route::group(['prefix' => 'user','middleware' => ['auth:api']], function() {
 	Route::post('export-pdf', 'UserController@exportPdf')->name('user.export-pdf');
 	Route::post('import', 'UserController@import')->name('user.import');
 	Route::post('select2', 'UserController@select2')->name('user.select2');
+});
+
+Route::group(['prefix' => 'province','middleware' => ['auth:api']], function() {
+	Route::get('', 'ProvinceController@list')->name('province.list');
+	Route::post('', 'ProvinceController@store')->name('province.create');
+	Route::get('{id}', 'ProvinceController@detail')->name('province.detail')->where('id', '[0-9]+');
+	Route::put('{id}', 'ProvinceController@update')->name('province.edit')->where('id', '[0-9]+');
+	Route::delete('{id}', 'ProvinceController@destroy')->name('province.delete')->where('id', '[0-9]+');
+	Route::post('datatable', 'ProvinceController@datatable')->name('province.datatable');
+	Route::post('export-xls', 'ProvinceController@exportXls')->name('province.export-xls');
+	Route::post('export-pdf', 'ProvinceController@exportPdf')->name('province.export-pdf');
+	Route::post('import', 'ProvinceController@import')->name('province.import');
+});
+
+Route::group(['prefix' => 'city','middleware' => ['auth:api']], function() {
+	Route::get('', 'CityController@list')->name('city.list');
+	Route::post('', 'CityController@store')->name('city.create');
+	Route::get('{id}', 'CityController@detail')->name('city.detail')->where('id', '[0-9]+');
+	Route::put('{id}', 'CityController@update')->name('city.edit')->where('id', '[0-9]+');
+	Route::delete('{id}', 'CityController@destroy')->name('city.delete')->where('id', '[0-9]+');
+	Route::post('datatable', 'CityController@datatable')->name('city.datatable');
+	Route::post('export-xls', 'CityController@exportXls')->name('city.export-xls');
+	Route::post('export-pdf', 'CityController@exportPdf')->name('city.export-pdf');
+	Route::post('import', 'CityController@import')->name('city.import');
 });
