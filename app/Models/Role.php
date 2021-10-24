@@ -17,9 +17,21 @@ class Role extends BaseModel
 
     public static function rule(){
         return [
-        	// Define rule here to display data on datatable and generate form builder
+            // Define rule here to display data on datatable and generate form builder
             // Example : 'name' => 'required|string|min:8|max:10',
             'name' => 'required|string',
+			'code' => 'required|string',
+
+        ];
+    
+    }
+
+    public static function ruleUpdate(){
+        return [
+            // Define rule here to display data on datatable and generate form builder
+            // Example : 'name' => 'required|string|min:8|max:10',
+            'name' => 'required|string',
+			'code' => 'required|string',
 
         ];
     

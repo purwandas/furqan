@@ -14,7 +14,7 @@ class RoleImportInputTemplate implements WithHeadings, WithEvents, ShouldAutoSiz
     */
     public function headings(): array
     {
-    	return ['NAME'];
+    	return ['NAME', 'CODE'];
     }
     
     public function registerEvents(): array

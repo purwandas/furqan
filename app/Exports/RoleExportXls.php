@@ -31,7 +31,7 @@ class RoleExportXls implements FromCollection, WithHeadings, ShouldAutoSize, Wit
 
     public function headings(): array
     {
-        return ['NAME'];
+        return ['NAME', 'CODE'];
     }
 
     public function registerEvents(): array

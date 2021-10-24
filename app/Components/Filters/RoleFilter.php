@@ -23,4 +23,13 @@ class RoleFilter extends QueryFilters
 		return $this->builder->where('roles.name', 'like', '%'.$value.'%');
 	}
 
+	public function code($value)
+	{
+		return is_array($value) ? $this->builder->whereIn('roles.code', $value) : $this->builder->where('roles.code', $value);
+	}
+	public function _code($value)
+	{
+		return $this->builder->where('roles.code', 'like', '%'.$value.'%');
+	}
+
 }

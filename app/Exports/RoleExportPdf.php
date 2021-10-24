@@ -19,10 +19,11 @@ class RoleExportPdf
 		$pdf    = PDF::loadView('components.pdf_template', [
 			'data'   => $data,
 			'header' => [
-				['NAME','text']
+				['NAME','text'],
+				['CODE','text']
 			],
 			'columns' => [
-				'name'
+				'name', 'code'
 			],
 			'modelName' => "Role"
 		]);

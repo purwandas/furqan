@@ -99,7 +99,7 @@ class RoleController extends Controller
         try{
             $role = DB::transaction(function () use ($request, $id) {
                 $role = Role::findOrFail($id);
-                $role->fillAndValidateUpdate()->save();
+                $role->fillAndValidate($request->all(), Role::ruleUpdate())->save();
                 return $role;
             });
         }catch(\Exception $ex){

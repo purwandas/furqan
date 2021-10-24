@@ -23,7 +23,8 @@ class RoleImportSheet implements OnEachRow, WithHeadingRow
         
 
         $data = Role::firstOrCreate([
-            'name' => $row['name']
+            'name' => $row['name'],
+			'code' => $row['code']
         ]);
 
     }
