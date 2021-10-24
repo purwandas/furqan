@@ -23,6 +23,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => ['auth']], function() {
 	Route::get('profile', 'UserController@updateProfile')->name('profile.index');
+	Route::get('password', 'UserController@updatePassword')->name('password.index');
 });
 
 Route::group(['middleware' => ['auth', 'admin']], function() {

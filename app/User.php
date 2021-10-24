@@ -138,6 +138,17 @@ class User extends Authenticatable implements JWTSubject
         return $filters->apply($query);
     }
 
+    public function scopeGenerateQuery($query, $filter = [])
+    {
+        $query->leftJoin('roles', 'roles.id', 'users.role_id')
+            ->leftJoin('provinces', 'provinces.id', 'users.province_id')
+            ->leftJoin('cities', 'cities.id', 'users.city_id')
+            ->select('users.*', 'roles.name as role_name', 'provinces.name as province_name', 'cities.name as city_name')
+            ->when(!empty($filter), function($q) use ($filter){
+                $q->filter($filter);
+            });
+    }
+
     public static function labelText()
     {
         return ['name'];

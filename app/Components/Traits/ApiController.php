@@ -3,9 +3,19 @@
 namespace App\Components\Traits;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 trait ApiController {
+
+    public function validateRequest($request, $rules)
+    {
+        $validator = Validator::make($request,$rules);
+        
+        if ($validator->fails()) throw new \Exception($validator->errors()->first(), 1);
+
+        return true;
+    }
 
 	/**
      * success response method.
@@ -16,8 +26,8 @@ trait ApiController {
     {
         $response = [
             'status' => true,
-            'type'    => 'success',
-            'msg' => $message,
+            'type'   => 'success',
+            'msg'    => $message,
         ];
 
         $arrResult = !is_array($result) ? $result->toArray() : $result;
@@ -41,8 +51,8 @@ trait ApiController {
     {
         $response = [
             'status' => false,
-            'type'    => 'failed',
-            'msg' => $error,
+            'type'   => 'failed',
+            'msg'    => $error,
         ];
 
 
@@ -55,11 +65,6 @@ trait ApiController {
                 } else {
                     $response['msg'] = $errorMessages;
                 }
-                // if(is_array($errorMessages)){
-                //     $response['data'] = $errorMessages;
-                // }else{
-                //     $response['data'][] = $errorMessages;
-                // }
             }
 
         }

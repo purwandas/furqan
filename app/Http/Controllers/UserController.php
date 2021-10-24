@@ -13,6 +13,7 @@ use App\Models\Role;
 use App\Templates\UserImportSheetTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use \App\User;
 
@@ -113,11 +114,71 @@ class UserController extends Controller
         return view('components.global_form', $final);
     }
 
+    public function updatePassword()
+    {
+        $user = \Auth::user();
+
+        $label = 'Password';
+        $data = [
+            'title' => $label,
+            'icon'  => $this->icon,
+            'breadcrumb' => [
+                ['label' => 'Update '.$label],
+            ],
+            'customVariables' => [
+                'id' => $user->id,
+            ],
+        ];
+
+        $customFormBuilder = [];
+        $exceptColumn      = ['name','email','phone_number','province_id','city_id','role_id'];
+
+            $customFormBuilder['password'] = [
+                'type' => 'password',
+                'elOptions' => [
+                    'placeholder' => 'Current Password',
+                    'required'    => 'required',
+                ],
+                'labelContainerClass' => 'col-md-3',
+                'inputContainerClass' => 'col-md-9',
+            ];
+
+            $customFormBuilder['new_password'] = [
+                'type' => 'password',
+                'elOptions' => [
+                    'placeholder' => 'New Password',
+                    'required'    => 'required',
+                ],
+                'labelContainerClass' => 'col-md-3',
+                'inputContainerClass' => 'col-md-9',
+            ];
+
+            $customFormBuilder['new_password_confirmation'] = [
+                'type' => 'password',
+                'elOptions' => [
+                    'placeholder' => 'New Password (re-type)',
+                    'required'    => 'required',
+                ],
+                'labelContainerClass' => 'col-md-3',
+                'inputContainerClass' => 'col-md-9',
+            ];
+
+        $form_data = new FormBuilderHelper(User::class,$data);
+        $final     = $form_data
+                    ->setFormPage(true)
+                    ->useModal(false)
+                    ->useDatatable(false)
+                    ->setExceptFormBuilderColumns($exceptColumn)
+                    ->setCustomFormBuilder($customFormBuilder)
+                    ->get();
+        
+        return view('components.global_form', $final);
+    }
+
     public function list(UserFilter $filter)
     {
-        $user = User::join('roles', 'roles.id', 'users.role_id')
-			->select('users.*', 'roles.name as role_name')
-			->filter($filter)->get();
+        $user = User::generateQuery($filter)->get();
+
         return $this->sendResponse($user, 'Get Data Success!');
     }
 
@@ -130,9 +191,7 @@ class UserController extends Controller
 
     public function datatable(UserFilter $filter)
     {
-        $data = User::join('roles', 'roles.id', 'users.role_id')
-			->select('users.*', 'roles.name as role_name')
-			->filter($filter);
+        $data = User::generateQuery($filter);
 
         return \DataTables::of($data)
             ->addColumn('action', function ($data){
@@ -174,11 +233,8 @@ class UserController extends Controller
 
     public function detail($id)
     {
-        $user = User::leftJoin('roles', 'roles.id', 'users.role_id')
-            ->leftJoin('provinces', 'provinces.id', 'users.province_id')
-            ->leftJoin('cities', 'cities.id', 'users.city_id')
-			->select('users.*', 'roles.name as role_name', 'provinces.name as province_name', 'cities.name as city_name')
-			->findOrFail($id);
+        $user = User::generateQuery()->findOrFail($id);
+        
         return $this->sendResponse($user, 'Get Data Success!');
     }
 
@@ -187,18 +243,41 @@ class UserController extends Controller
         try{
             $user = DB::transaction(function () use ($request, $id) {
 
-                if (empty($request['password'])) {
-                    unset($request['password']);
-                } else {
-                    $request['password'] = bcrypt($request['password']);
-                }
-
                 $user = User::findOrFail($id);
-                $user->fillAndValidateUpdate()->save();
+
+                if (isset($request->new_password)) { // update password only
+                    
+                    $this->validateRequest($request->all(),[
+                        'password'     => 'required|string',
+                        'new_password' => 'required|string|confirmed',
+                    ]);
+
+                    if (Hash::check($request->password, $user->password)) {
+                        $user->password = bcrypt($request['new_password']);
+                        $user->save();
+                    } else {
+                        return ['success' => false, 'response' => $this->sendError('Current Password was wrong!', null, 500)];
+                    }
+
+                } else {
+
+                    if (empty($request['password'])) {
+                        unset($request['password']);
+                    } else {
+                        $request['password'] = bcrypt($request['password']);
+                    }
+
+                    $user->fillAndValidateUpdate()->save();
+
+                }
                 return $user;
             });
         }catch(\Exception $ex){
             return $this->sendError('Update Data Error!', $ex, 500);
+        }
+
+        if (array_key_exists('success', $user)) {
+            return $user['response'];
         }
 
         return $this->sendResponse($user, 'Update Data Success!');
