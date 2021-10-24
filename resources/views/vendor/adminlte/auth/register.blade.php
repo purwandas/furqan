@@ -49,6 +49,54 @@
             @endif
         </div>
 
+        {{-- Phone Number field --}}
+        <div class="input-group mb-3">
+            <input type="text" name="phone_number" class="form-control {{ $errors->has('phone_number') ? 'is-invalid' : '' }}"
+                   value="{{ old('phone_number') }}" placeholder="Phone Number">
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-phone {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                </div>
+            </div>
+            @if($errors->has('phone_number'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('phone_number') }}</strong>
+                </div>
+            @endif
+        </div>
+
+        {{-- Province field --}}
+        <div class="input-group mb-3">
+                {{ Form::select2Input('province', null, 'province.select2', ['useLabel' => false, 'containerClass' => 'form-control', 'containerStyles' => ['padding' => 0]]) }}
+            
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-map-marker {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                </div>
+            </div>
+            @if($errors->has('province'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('province') }}</strong>
+                </div>
+            @endif
+        </div>
+
+        {{-- City field --}}
+        <div class="input-group mb-3">
+                {{ Form::select2Input('city', null, 'city.select2', ['useLabel' => false, 'containerClass' => 'form-control', 'containerStyles' => ['padding' => 0], 'ajaxParams'   => ['province_id' => "$('#select2-province').val()"]]) }}
+            
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-map-marker-alt {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                </div>
+            </div>
+            @if($errors->has('city'))
+                <div class="invalid-feedback">
+                    <strong>{{ $errors->first('city') }}</strong>
+                </div>
+            @endif
+        </div>
+
         {{-- Password field --}}
         <div class="input-group mb-3">
             <input type="password" name="password"

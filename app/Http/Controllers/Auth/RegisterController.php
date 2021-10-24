@@ -7,7 +7,9 @@ use App\Providers\RouteServiceProvider;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use JWTAuth;
 
 class RegisterController extends Controller
 {
@@ -50,9 +52,12 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'name'         => ['required', 'string', 'max:255'],
+            'email'        => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password'     => ['required', 'string', 'min:8', 'confirmed'],
+            'phone_number' => ['required','numeric'],
+            'province'     => ['required','exists:provinces,id'],
+            'city'         => ['required','exists:cities,id'],
         ]);
     }
 
@@ -64,10 +69,19 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+        $user = User::create([
+            'name'         => $data['name'],
+            'email'        => $data['email'],
+            'phone_number' => $data['phone_number'],
+            'province_id'  => $data['province'],
+            'city_id'      => $data['city'],
+            'password'     => Hash::make($data['password']),
         ]);
+        
+        $token = JWTAuth::attempt(['email' => $data['email'], 'password' => $data['password']]); 
+        session(['token' => $token]);
+        Session::regenerate();
+
+        return $user;
     }
 }
