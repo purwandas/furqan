@@ -66,14 +66,13 @@ class UserController extends Controller
         ];
 
         $customFormBuilder = [];
-        $exceptColumn      = [];
+        $exceptColumn      = ['password'];
 
         if (! ($user->role_id == Role::ADMIN) ){
-            $exceptColumn = ['password', 'role_id'];
-        } else {
+
             $customFormBuilder['role_id'] = [
                 'type'      => 'select2',
-                'value'     => [Role::ADMIN, Role::ADMIN_LABEL],
+                'value'     => [$user->role_id, $user->role->name],
                 'name'      => 'role_id',
                 'text'      => 'obj.name',
                 'options'   => 'role.select2',
@@ -96,6 +95,9 @@ class UserController extends Controller
                     'required'    => 'required',
                 ]
             ];
+
+        } else {
+            $exceptColumn = array_merge($exceptColumn, ['role_id','phone_number','province_id','city_id']);
         }
 
         $customOrder = ['name', 'email', 'phone_number', 'password', 'province_id', 'city_id', 'role_id'];
@@ -234,7 +236,7 @@ class UserController extends Controller
     public function detail($id)
     {
         $user = User::generateQuery()->findOrFail($id);
-        
+
         return $this->sendResponse($user, 'Get Data Success!');
     }
 
