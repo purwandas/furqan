@@ -1,11 +1,11 @@
 <?php
 
-namespace App{{modelNameSpace}};
+namespace App\Models;
 
 use App\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class {{modelName}} extends BaseModel
+class Language extends BaseModel
 {
     use SoftDeletes;
     
@@ -15,7 +15,8 @@ class {{modelName}} extends BaseModel
         return [
             // Define rule here to display data on datatable and generate form builder
             // Example : 'name' => 'required|string|min:8|max:10',
-            {{modelRules}}
+            'name' => 'required|string',
+
         ];
     
     }
@@ -24,18 +25,21 @@ class {{modelName}} extends BaseModel
         return [
             // Define rule here to display data on datatable and generate form builder
             // Example : 'name' => 'required|string|min:8|max:10',
-            {{modelRules}}
+            'name' => 'required|string',
+
         ];
     
     }
 
-    {{modelFunction}}
+    public static function labelText()
+	{
+		return ['name'];
+	}
+
 
     public function scopeGenerateQuery($query, $filter = [])
     {
-        $query->
-            //{{defaultJoin}}{{defaultSelect}}
-            when(!empty($filter), function($q) use ($filter){
+        $query->when(!empty($filter), function($q) use ($filter){
                 $q->filter($filter);
             });
     }

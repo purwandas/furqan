@@ -21,10 +21,18 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+
 Route::group(['middleware' => ['auth']], function() {
 	Route::get('profile', 'UserController@formProfile')->name('profile.index');
 	Route::get('password', 'UserController@formPassword')->name('password.index');
+
+	Route::group(['prefix' => 'blog'], function() {
+		Route::get('', 'BlogController@index')->name('blog.index');
+		Route::get('import-template', 'BlogController@importTemplate')->name('blog.import-template');
+	});
 });
+
+
 
 Route::group(['middleware' => ['auth', 'admin']], function() {
 
@@ -38,6 +46,16 @@ Route::group(['middleware' => ['auth', 'admin']], function() {
 		Route::get('import-template', 'UserController@importTemplate')->name('user.import-template');
 	});
 
+	Route::group(['prefix' => 'blog-category'], function() {
+		Route::get('', 'BlogCategoryController@index')->name('blog-category.index');
+		Route::get('import-template', 'BlogCategoryController@importTemplate')->name('blog-category.import-template');
+	});
+
+	Route::group(['prefix' => 'language'], function() {
+		Route::get('', 'LanguageController@index')->name('language.index');
+		Route::get('import-template', 'LanguageController@importTemplate')->name('language.import-template');
+	});
+
 	Route::group(['prefix' => 'province'], function() {
 		Route::get('', 'ProvinceController@index')->name('province.index');
 		Route::get('import-template', 'ProvinceController@importTemplate')->name('province.import-template');
@@ -49,3 +67,4 @@ Route::group(['middleware' => ['auth', 'admin']], function() {
 	});
 
 });
+

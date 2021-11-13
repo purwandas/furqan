@@ -43,7 +43,6 @@ $configAttributes = array_merge([
 ], $attributes['elOptions']);
 
 
-
 @endphp
 
 <div class="{{ @$attributes['containerClass'] ?? 'form-group row' }} {{ !$errors->has($name) ?: 'has-error' }}">
@@ -51,7 +50,7 @@ $configAttributes = array_merge([
         <label for="container{{$id}}" class="{{$labelContainerClass}}">{!! ucfirst($attributes['labelText'] ?? $name) !!}</label>
 
 		@if(!isset($attributes['formAlignment']) || (isset($attributes['formAlignment']) && $attributes['formAlignment'] == 'horizontal'))
-        <div class="{{$config['inputContainerClass'] ?? 'col-md-10' }}">
+        <div class="{{$inputContainerClass}}">
         @endif
 	@endif
 

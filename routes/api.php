@@ -81,3 +81,43 @@ Route::group(['prefix' => 'city','middleware' => ['auth:api']], function() {
 	Route::post('export-pdf', 'CityController@exportPdf')->name('city.export-pdf');
 	Route::post('import', 'CityController@import')->name('city.import');
 });
+
+
+Route::group(['prefix' => 'blog-category','middleware' => ['auth:api']], function() {
+	Route::get('', 'BlogCategoryController@list')->name('blog-category.list');
+	Route::post('', 'BlogCategoryController@store')->name('blog-category.create');
+	Route::get('{id}', 'BlogCategoryController@detail')->name('blog-category.detail')->where('id', '[0-9]+');
+	Route::put('{id}', 'BlogCategoryController@update')->name('blog-category.edit')->where('id', '[0-9]+');
+	Route::delete('{id}', 'BlogCategoryController@destroy')->name('blog-category.delete')->where('id', '[0-9]+');
+	Route::post('datatable', 'BlogCategoryController@datatable')->name('blog-category.datatable');
+	Route::post('export-xls', 'BlogCategoryController@exportXls')->name('blog-category.export-xls');
+	Route::post('export-pdf', 'BlogCategoryController@exportPdf')->name('blog-category.export-pdf');
+	Route::post('import', 'BlogCategoryController@import')->name('blog-category.import');
+	Route::post('select2', 'BlogCategoryController@select2')->name('blog-category.select2');
+});
+
+Route::group(['prefix' => 'language','middleware' => ['auth:api']], function() {
+	Route::get('', 'LanguageController@list')->name('language.list');
+	Route::post('', 'LanguageController@store')->name('language.create');
+	Route::get('{id}', 'LanguageController@detail')->name('language.detail')->where('id', '[0-9]+');
+	Route::put('{id}', 'LanguageController@update')->name('language.edit')->where('id', '[0-9]+');
+	Route::delete('{id}', 'LanguageController@destroy')->name('language.delete')->where('id', '[0-9]+');
+	Route::post('datatable', 'LanguageController@datatable')->name('language.datatable');
+	Route::post('export-xls', 'LanguageController@exportXls')->name('language.export-xls');
+	Route::post('export-pdf', 'LanguageController@exportPdf')->name('language.export-pdf');
+	Route::post('import', 'LanguageController@import')->name('language.import');
+	Route::post('select2', 'LanguageController@select2')->name('language.select2');
+});
+
+Route::group(['prefix' => 'blog','middleware' => ['auth:api']], function() {
+	Route::get('', 'BlogController@list')->name('blog.list');
+	Route::post('', 'BlogController@store')->name('blog.create');
+	Route::get('{id}', 'BlogController@detail')->name('blog.detail')->where('id', '[0-9]+');
+	Route::put('{id}', 'BlogController@update')->name('blog.edit')->where('id', '[0-9]+');
+	Route::delete('{id}', 'BlogController@destroy')->name('blog.delete')->where('id', '[0-9]+');
+	Route::post('datatable', 'BlogController@datatable')->name('blog.datatable');
+	Route::post('export-xls', 'BlogController@exportXls')->name('blog.export-xls');
+	Route::post('export-pdf', 'BlogController@exportPdf')->name('blog.export-pdf');
+	Route::post('import', 'BlogController@import')->name('blog.import');
+	Route::post('select2', 'BlogController@select2')->name('blog.select2');
+});

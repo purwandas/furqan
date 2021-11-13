@@ -111,6 +111,7 @@ if (@$config['containerStyles']) {
     	}
     	.select2-container--default .select2-selection--multiple .select2-selection__choice {
 	    	border-color: #d2d1d1;
+	    	color: #212529;
     	}
     	.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
     		margin-right: 0px;

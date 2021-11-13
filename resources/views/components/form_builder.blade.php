@@ -452,7 +452,7 @@ $redirectRoute = @$redirectRoute ?? route($model::toKey()['route'].'.index')
         clear{{$model::toKey()['class']}}Input();
         @endif
 
-        $('#form{{$model::toKey()['class']}}').prop('action', '{{ @$customRoute ? route($customRoute[0]) : 'url' }}');
+        $('#form{{$model::toKey()['class']}}').prop('action', {{ @$customRoute ? ("'".route($customRoute[0])."'") : 'url' }});
         $('#form{{$model::toKey()['class']}}').append('<input type="hidden" name="_method" value="PUT" id="_method">');
 
         $.ajax({
@@ -472,13 +472,16 @@ $redirectRoute = @$redirectRoute ?? route($model::toKey()['route'].'.index')
                 {!!@$onEdit!!}
 		        setTimeout(function() {
 			        {!!@$onEdit2!!}
+			        if (typeof onEdit2Inject === "function") {
+			        	onEdit2Inject();
+			        }
 			        {!!@$setFocus!!}
 		        }, 500);
 		        if (typeof dataEdit !== "undefined") {
 		        	dataEdit = data;
 		        }
-		        if (typeof setupInjector === "function") {
-		        	setupInjector();
+		        if (typeof onEditInject === "function") {
+		        	onEditInject();
 		        }
 		    },
             error: function(xhr, textStatus, errorThrown){
@@ -493,6 +496,10 @@ $redirectRoute = @$redirectRoute ?? route($model::toKey()['route'].'.index')
 
     function clear{{$model::toKey()['class']}}Input() {
         {!!@$onClear!!}
+
+        if (typeof onClearInject === "function") {
+	        onClearInject();
+        }
     }
     @endif
 

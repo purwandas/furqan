@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Components\Filters\{{modelName}}Filter;
+use App\Components\Filters\BlogCategoryFilter;
 use App\Components\Helpers\DatatableBuilderHelper;
 use App\Components\Helpers\FormBuilderHelper;
 use App\Components\Traits\ApiController;
-use App\Exports\{{modelName}}ExportPdf;
-use App\Exports\{{modelName}}ExportXls;
-use App\Imports\{{modelName}}Import;
-use App\Templates\{{modelName}}ImportSheetTemplate;
-use {{modelNameSpace}};
+use App\Exports\BlogCategoryExportPdf;
+use App\Exports\BlogCategoryExportXls;
+use App\Imports\BlogCategoryImport;
+use App\Templates\BlogCategoryImportSheetTemplate;
+use \App\Models\BlogCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
-class {{modelName}}Controller extends Controller
+class BlogCategoryController extends Controller
 {
     use ApiController;
 
-    public $type, $label = "{{modelTitle}}", $icon = 'fa fa-user-md';
+    public $type, $label = "Blog Category", $icon = 'fa fa-user-md';
 
     public function index()
     {
@@ -31,39 +31,39 @@ class {{modelName}}Controller extends Controller
             ]
         ];
 
-        $form_data = new FormBuilderHelper({{modelName}}::class,$data);
-        $final     = $form_data{{customHelper}}->get();
+        $form_data = new FormBuilderHelper(BlogCategory::class,$data);
+        $final     = $form_data->get();
         
         return view('components.global_form', $final);
     }
 
-    public function list({{modelName}}Filter $filter)
+    public function list(BlogCategoryFilter $filter)
     {
-        ${{modelNameSingularLowerCase}} = {{modelName}}::generateQuery($filter)->get();
-        return $this->sendResponse(${{modelNameSingularLowerCase}}, 'Get Data Success!');
+        $blogCategory = BlogCategory::generateQuery($filter)->get();
+        return $this->sendResponse($blogCategory, 'Get Data Success!');
     }
 
-    public function select2({{modelName}}Filter $filter)
+    public function select2(BlogCategoryFilter $filter)
     {
-        return {{modelName}}::generateQuery($filter)->get();
+        return BlogCategory::generateQuery($filter)->get();
     }
 
-    public function datatable({{modelName}}Filter $filter)
+    public function datatable(BlogCategoryFilter $filter)
     {
-        $data = {{modelName}}::generateQuery($filter);
+        $data = BlogCategory::generateQuery($filter);
 
         return \DataTables::of($data)
-            ->addColumn('action', function ($item){
+            ->addColumn('action', function ($data){
                 $buttons = [];
 
                 $buttons = array_merge($buttons, [
                                 'edit' => [
-                                    'onclick' => "editModal{{modelName}}('".route('{{modelRoute}}.edit',['id'=>$item->id])."')",
-                                    'data-target' => '#modalForm{{modelName}}',
+                                    'onclick' => "editModalBlogCategory('".route('blog-category.edit',['id'=>$data->id])."')",
+                                    'data-target' => '#modalFormBlogCategory',
                                     'icon' => getSvgIcon('fa-pencil-alt','mt-m-2'),
                                 ],
                                 'delete' => [
-                                    'data-url' => route('{{modelRoute}}.delete',['id'=>$item->id]),
+                                    'data-url' => route('blog-category.delete',['id'=>$data->id]),
                                     'icon' => getSvgIcon('fa-trash','mt-m-2'),
                                 ],
                             ]);
@@ -76,45 +76,45 @@ class {{modelName}}Controller extends Controller
     public function store(Request $request)
     {
         try{
-            ${{modelNameSingularLowerCase}} = DB::transaction(function () use ($request) {
-                ${{modelNameSingularLowerCase}} = new {{modelName}};
-                ${{modelNameSingularLowerCase}}->fillAndValidate()->save();
-                return ${{modelNameSingularLowerCase}};
+            $blogCategory = DB::transaction(function () use ($request) {
+                $blogCategory = new BlogCategory;
+                $blogCategory->fillAndValidate()->save();
+                return $blogCategory;
             });
         }catch(\Exception $ex){
             return $this->sendError('Insert Data Error!', $ex, 500);
         }
 
-        return $this->sendResponse(${{modelNameSingularLowerCase}}, 'Insert Data Success!');
+        return $this->sendResponse($blogCategory, 'Insert Data Success!');
     }
 
     public function detail($id)
     {
-        ${{modelNameSingularLowerCase}} = {{modelName}}::generateQuery()->findOrFail($id);
-        return $this->sendResponse(${{modelNameSingularLowerCase}}, 'Get Data Success!');
+        $blogCategory = BlogCategory::generateQuery()->findOrFail($id);
+        return $this->sendResponse($blogCategory, 'Get Data Success!');
     }
 
     public function update(Request $request, $id)
     {
         try{
-            ${{modelNameSingularLowerCase}} = DB::transaction(function () use ($request, $id) {
-                ${{modelNameSingularLowerCase}} = {{modelName}}::findOrFail($id);
-                ${{modelNameSingularLowerCase}}->fillAndValidate($request->all(), {{modelName}}::ruleUpdate())->save();
-                return ${{modelNameSingularLowerCase}};
+            $blogCategory = DB::transaction(function () use ($request, $id) {
+                $blogCategory = BlogCategory::findOrFail($id);
+                $blogCategory->fillAndValidate($request->all(), BlogCategory::ruleUpdate())->save();
+                return $blogCategory;
             });
         }catch(\Exception $ex){
             return $this->sendError('Update Data Error!', $ex, 500);
         }
 
-        return $this->sendResponse(${{modelNameSingularLowerCase}}, 'Update Data Success!');
+        return $this->sendResponse($blogCategory, 'Update Data Success!');
     }
 
     public function destroy($id)
     {
         try{
             DB::transaction(function () use ($id) {
-                ${{modelNameSingularLowerCase}} = {{modelName}}::findOrFail($id);
-                ${{modelNameSingularLowerCase}}->delete();
+                $blogCategory = BlogCategory::findOrFail($id);
+                $blogCategory->delete();
             });
         }catch(\Exception $ex){
             return $this->sendError('Delete Data Error!', $ex, 500);
@@ -128,9 +128,9 @@ class {{modelName}}Controller extends Controller
         processing_jobs([
             'title'   => 'Download '.$this->label,
             'filters' => $request->all(),
-            'model'   => {{modelName}}ExportXls::class,
+            'model'   => BlogCategoryExportXls::class,
             'module'  => $this->label,
-            'path'    => 'exports/{{modelRoute}}/xlsx',
+            'path'    => 'exports/blog-category/xlsx',
             'ext'     => 'xlsx',
         ]);
         
@@ -143,9 +143,9 @@ class {{modelName}}Controller extends Controller
         processing_jobs([
             'title'   => 'Download '.$this->label,
             'filters' => $request->all(),
-            'model'   => {{modelName}}ExportPdf::class,
+            'model'   => BlogCategoryExportPdf::class,
             'module'  => $this->label,
-            'path'    => 'exports/{{modelRoute}}/pdf',
+            'path'    => 'exports/blog-category/pdf',
         ]);
         
         return $this->sendResponse([], 'Download '.$this->label.' has been processed.');
@@ -155,9 +155,9 @@ class {{modelName}}Controller extends Controller
     {
         processing_jobs([
             'title'  => 'Upload '.$this->label,
-            'model'  => {{modelName}}Import::class,
+            'model'  => BlogCategoryImport::class,
             'module' => $this->label,
-            'path'   => 'imports/{{modelRoute}}',
+            'path'   => 'imports/blog-category',
         ]);
         
         return $this->sendResponse([], 'Upload '.$this->label.' has been processed.');
@@ -165,6 +165,6 @@ class {{modelName}}Controller extends Controller
 
     public function importTemplate()
     {
-        return Excel::download(new {{modelName}}ImportSheetTemplate, 'Template For Import '.$this->label.' Data.xlsx');
+        return Excel::download(new BlogCategoryImportSheetTemplate, 'Template For Import '.$this->label.' Data.xlsx');
     }
 }

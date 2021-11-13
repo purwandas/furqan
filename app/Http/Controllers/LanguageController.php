@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Components\Filters\{{modelName}}Filter;
+use App\Components\Filters\LanguageFilter;
 use App\Components\Helpers\DatatableBuilderHelper;
 use App\Components\Helpers\FormBuilderHelper;
 use App\Components\Traits\ApiController;
-use App\Exports\{{modelName}}ExportPdf;
-use App\Exports\{{modelName}}ExportXls;
-use App\Imports\{{modelName}}Import;
-use App\Templates\{{modelName}}ImportSheetTemplate;
-use {{modelNameSpace}};
+use App\Exports\LanguageExportPdf;
+use App\Exports\LanguageExportXls;
+use App\Imports\LanguageImport;
+use App\Templates\LanguageImportSheetTemplate;
+use \App\Models\Language;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
-class {{modelName}}Controller extends Controller
+class LanguageController extends Controller
 {
     use ApiController;
 
-    public $type, $label = "{{modelTitle}}", $icon = 'fa fa-user-md';
+    public $type, $label = "Language", $icon = 'fa fa-user-md';
 
     public function index()
     {
@@ -31,39 +31,39 @@ class {{modelName}}Controller extends Controller
             ]
         ];
 
-        $form_data = new FormBuilderHelper({{modelName}}::class,$data);
-        $final     = $form_data{{customHelper}}->get();
+        $form_data = new FormBuilderHelper(Language::class,$data);
+        $final     = $form_data->get();
         
         return view('components.global_form', $final);
     }
 
-    public function list({{modelName}}Filter $filter)
+    public function list(LanguageFilter $filter)
     {
-        ${{modelNameSingularLowerCase}} = {{modelName}}::generateQuery($filter)->get();
-        return $this->sendResponse(${{modelNameSingularLowerCase}}, 'Get Data Success!');
+        $language = Language::generateQuery($filter)->get();
+        return $this->sendResponse($language, 'Get Data Success!');
     }
 
-    public function select2({{modelName}}Filter $filter)
+    public function select2(LanguageFilter $filter)
     {
-        return {{modelName}}::generateQuery($filter)->get();
+        return Language::generateQuery($filter)->get();
     }
 
-    public function datatable({{modelName}}Filter $filter)
+    public function datatable(LanguageFilter $filter)
     {
-        $data = {{modelName}}::generateQuery($filter);
+        $data = Language::generateQuery($filter);
 
         return \DataTables::of($data)
-            ->addColumn('action', function ($item){
+            ->addColumn('action', function ($data){
                 $buttons = [];
 
                 $buttons = array_merge($buttons, [
                                 'edit' => [
-                                    'onclick' => "editModal{{modelName}}('".route('{{modelRoute}}.edit',['id'=>$item->id])."')",
-                                    'data-target' => '#modalForm{{modelName}}',
+                                    'onclick' => "editModalLanguage('".route('language.edit',['id'=>$data->id])."')",
+                                    'data-target' => '#modalFormLanguage',
                                     'icon' => getSvgIcon('fa-pencil-alt','mt-m-2'),
                                 ],
                                 'delete' => [
-                                    'data-url' => route('{{modelRoute}}.delete',['id'=>$item->id]),
+                                    'data-url' => route('language.delete',['id'=>$data->id]),
                                     'icon' => getSvgIcon('fa-trash','mt-m-2'),
                                 ],
                             ]);
@@ -76,45 +76,45 @@ class {{modelName}}Controller extends Controller
     public function store(Request $request)
     {
         try{
-            ${{modelNameSingularLowerCase}} = DB::transaction(function () use ($request) {
-                ${{modelNameSingularLowerCase}} = new {{modelName}};
-                ${{modelNameSingularLowerCase}}->fillAndValidate()->save();
-                return ${{modelNameSingularLowerCase}};
+            $language = DB::transaction(function () use ($request) {
+                $language = new Language;
+                $language->fillAndValidate()->save();
+                return $language;
             });
         }catch(\Exception $ex){
             return $this->sendError('Insert Data Error!', $ex, 500);
         }
 
-        return $this->sendResponse(${{modelNameSingularLowerCase}}, 'Insert Data Success!');
+        return $this->sendResponse($language, 'Insert Data Success!');
     }
 
     public function detail($id)
     {
-        ${{modelNameSingularLowerCase}} = {{modelName}}::generateQuery()->findOrFail($id);
-        return $this->sendResponse(${{modelNameSingularLowerCase}}, 'Get Data Success!');
+        $language = Language::generateQuery()->findOrFail($id);
+        return $this->sendResponse($language, 'Get Data Success!');
     }
 
     public function update(Request $request, $id)
     {
         try{
-            ${{modelNameSingularLowerCase}} = DB::transaction(function () use ($request, $id) {
-                ${{modelNameSingularLowerCase}} = {{modelName}}::findOrFail($id);
-                ${{modelNameSingularLowerCase}}->fillAndValidate($request->all(), {{modelName}}::ruleUpdate())->save();
-                return ${{modelNameSingularLowerCase}};
+            $language = DB::transaction(function () use ($request, $id) {
+                $language = Language::findOrFail($id);
+                $language->fillAndValidate($request->all(), Language::ruleUpdate())->save();
+                return $language;
             });
         }catch(\Exception $ex){
             return $this->sendError('Update Data Error!', $ex, 500);
         }
 
-        return $this->sendResponse(${{modelNameSingularLowerCase}}, 'Update Data Success!');
+        return $this->sendResponse($language, 'Update Data Success!');
     }
 
     public function destroy($id)
     {
         try{
             DB::transaction(function () use ($id) {
-                ${{modelNameSingularLowerCase}} = {{modelName}}::findOrFail($id);
-                ${{modelNameSingularLowerCase}}->delete();
+                $language = Language::findOrFail($id);
+                $language->delete();
             });
         }catch(\Exception $ex){
             return $this->sendError('Delete Data Error!', $ex, 500);
@@ -128,9 +128,9 @@ class {{modelName}}Controller extends Controller
         processing_jobs([
             'title'   => 'Download '.$this->label,
             'filters' => $request->all(),
-            'model'   => {{modelName}}ExportXls::class,
+            'model'   => LanguageExportXls::class,
             'module'  => $this->label,
-            'path'    => 'exports/{{modelRoute}}/xlsx',
+            'path'    => 'exports/language/xlsx',
             'ext'     => 'xlsx',
         ]);
         
@@ -143,9 +143,9 @@ class {{modelName}}Controller extends Controller
         processing_jobs([
             'title'   => 'Download '.$this->label,
             'filters' => $request->all(),
-            'model'   => {{modelName}}ExportPdf::class,
+            'model'   => LanguageExportPdf::class,
             'module'  => $this->label,
-            'path'    => 'exports/{{modelRoute}}/pdf',
+            'path'    => 'exports/language/pdf',
         ]);
         
         return $this->sendResponse([], 'Download '.$this->label.' has been processed.');
@@ -155,9 +155,9 @@ class {{modelName}}Controller extends Controller
     {
         processing_jobs([
             'title'  => 'Upload '.$this->label,
-            'model'  => {{modelName}}Import::class,
+            'model'  => LanguageImport::class,
             'module' => $this->label,
-            'path'   => 'imports/{{modelRoute}}',
+            'path'   => 'imports/language',
         ]);
         
         return $this->sendResponse([], 'Upload '.$this->label.' has been processed.');
@@ -165,6 +165,6 @@ class {{modelName}}Controller extends Controller
 
     public function importTemplate()
     {
-        return Excel::download(new {{modelName}}ImportSheetTemplate, 'Template For Import '.$this->label.' Data.xlsx');
+        return Excel::download(new LanguageImportSheetTemplate, 'Template For Import '.$this->label.' Data.xlsx');
     }
 }

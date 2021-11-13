@@ -21,7 +21,7 @@ class UserController extends Controller
 {
     use ApiController;
 
-    public $type, $label = "User", $icon = 'fa fa-user-md';
+    public $type, $label = "User", $icon = 'fa fa-user';
 
     public function index()
     {
@@ -115,7 +115,7 @@ class UserController extends Controller
         $label = 'Password';
         $data = [
             'title' => $label,
-            'icon'  => $this->icon,
+            'icon'  => 'fas fa-lock',
             'breadcrumb' => [
                 ['label' => 'Update '.$label],
             ],

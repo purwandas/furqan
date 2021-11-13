@@ -239,7 +239,6 @@ class CreateBuilder extends Command
     {
         $dir = (!empty($modelDir) ? "\\".$modelDir : "");
         $modelRules  = generateTextRule($this->fields, $this->rules, $this->modelWithNamespace, $this->fExcept);
-        $defEloquent = generateDefaultEloquent($this->modelWithNamespace, $name, $this->fields, $this->rules, $this->fExcept);
 
         $rules    = $modelRules['rules'];
         $function = $modelRules['function'];
@@ -250,7 +249,27 @@ class CreateBuilder extends Command
                 '{{modelNameSpace}}',
                 '{{modelRules}}',
                 '{{modelFunction}}',
-                '{{defaultJoin}}',
+            ],
+            [
+                $name,
+                $dir,
+                $rules,
+                $function,
+            ],
+            $this->getStub('Model')
+        );
+
+        !is_dir(app_path($modelDir)) ? mkdir(app_path($modelDir)) : '';
+        file_put_contents(app_path($modelDir."/{$name}.php"), $modelTemplate);
+
+        $defEloquent = generateDefaultEloquent($this->modelWithNamespace, $name, $this->fields, $this->rules, $this->fExcept);
+        $modelTemplate = str_replace(
+            [
+                '{{modelName}}',
+                '{{modelNameSpace}}',
+                '{{modelRules}}',
+                '{{modelFunction}}',
+                '//{{defaultJoin}}',
                 '{{defaultSelect}}',
             ],
             [
@@ -263,9 +282,8 @@ class CreateBuilder extends Command
             ],
             $this->getStub('Model')
         );
-
-        !is_dir(app_path($modelDir)) ? mkdir(app_path($modelDir)) : '';
         file_put_contents(app_path($modelDir."/{$name}.php"), $modelTemplate);
+
     }
 
     protected function generateFilter($name, $filterDir)

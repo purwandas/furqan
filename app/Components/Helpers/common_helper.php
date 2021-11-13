@@ -983,6 +983,9 @@ if(!function_exists('getConfigMenu')){
 			$configIcon['password'] = "fas fa-lock";
 			$configIcon['province'] = "fas fa-map-marker";
 			$configIcon['city']     = "fas fa-map-marker-alt";
+			$configIcon['language']     = "fas fa-language";
+			$configIcon['blog']     = "fas fa-globe";
+			$configIcon['blog-category']     = "fas fa-atlas";
 
 		    return $configIcon;
 		}
