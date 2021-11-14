@@ -979,6 +979,13 @@ if(!function_exists('isAdmin')){
     }
 }
 
+if(!function_exists('tableCheckbox')){
+	function tableCheckbox($tableId, $dataId) {
+        return '<input type="checkbox" id="'.$tableId.'_s-checkbox_'.$dataId.'" data-element="'.$tableId.'_s-checkbox_'.$dataId.'" data-id="'.$dataId.'" class="s-checkbox">';
+    }
+}
+
+
 if(!function_exists('getConfigMenu')){
 	function getConfigMenu($type) {
 		if ($type == 'icon') {

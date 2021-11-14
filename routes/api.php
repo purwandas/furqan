@@ -89,7 +89,7 @@ Route::group(['prefix' => 'blog-category','middleware' => ['auth:api']], functio
 	Route::get('{id}', 'BlogCategoryController@detail')->name('blog-category.detail')->where('id', '[0-9]+');
 	Route::put('{id}', 'BlogCategoryController@update')->name('blog-category.edit')->where('id', '[0-9]+');
 	Route::delete('{id}', 'BlogCategoryController@destroy')->name('blog-category.delete')->where('id', '[0-9]+');
-	Route::post('datatable', 'BlogCategoryController@datatable')->name('blog-category.datatable');
+	Route::post('datatable/{type?}', 'BlogCategoryController@datatable')->name('blog-category.datatable');
 	Route::post('export-xls', 'BlogCategoryController@exportXls')->name('blog-category.export-xls');
 	Route::post('export-pdf', 'BlogCategoryController@exportPdf')->name('blog-category.export-pdf');
 	Route::post('import', 'BlogCategoryController@import')->name('blog-category.import');

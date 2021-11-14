@@ -68,6 +68,7 @@ class BlogController extends Controller
         $exceptForm                = ['protocol'];
 
         if (isAdmin()) {
+            $additionalDatatableolumns[] = 'select';
 
             $customFormBuilder['user_id'] = [
                 'type'      => 'select2',
@@ -93,6 +94,7 @@ class BlogController extends Controller
 
         $customOrder = ['name', 'protocol', 'url', 'blog_category_id', 'language_id', 'user_id'];
         $tableOrder  = ['name', 'protocol', 'url', 'blog_category', 'language_id', 'user_id'];
+        $tableColumnDefs = [['width' => '20px', 'targets' => [0]]];
 
         $form_data = new FormBuilderHelper(Blog::class,$data);
         $final     = $form_data
@@ -102,7 +104,8 @@ class BlogController extends Controller
                     ->setExceptDatatableColumns($exceptDatatable)
                     ->setAdditionalDatatableColumns($additionalDatatableolumns)
                     ->setOrderDatatableColumns($tableOrder)
-                    ->injectView(['inject/blog-form'])
+                    ->setDatatableColumnDefs($tableColumnDefs)
+                    ->injectView(['inject/blog-form', 'inject/datatable-select' => ['tableId' => 'blog_datatable'] ])
                     ->get();
         
         return view('components.global_form', $final);
@@ -119,7 +122,7 @@ class BlogController extends Controller
         return Blog::generateQuery($filter)->get();
     }
 
-    public function datatable(BlogFilter $filter)
+    public function datatable(BlogFilter $filter, $type = null)
     {
         $data = Blog::generateQuery($filter);
 
@@ -127,7 +130,12 @@ class BlogController extends Controller
             ->editColumn('url', function ($item){
                 return $item->protocol.$item->url;
             })
-            ->addColumn('action', function ($item){
+            ->addColumn('select', function ($item){
+                if (isAdmin()){ // && !empty($type)) {
+                    return tableCheckbox('blog_datatable', $item->id);
+                }
+            })
+            ->addColumn('action', function ($item) use ($type){
                 $buttons = [];
 
                 $buttons = array_merge($buttons, [
@@ -144,6 +152,7 @@ class BlogController extends Controller
 
                 return DatatableBuilderHelper::button($buttons);
             })
+            ->rawColumns(['action','select'])
             ->make(true);
     }
 

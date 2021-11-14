@@ -16,7 +16,7 @@ class Admin
      */
     public function handle($request, Closure $next)
     {
-        if(auth()->user()->role_id == Role::ADMIN){
+        if(isAdmin()){
             return $next($request);
         }
         return redirect('home')->with('error','Permission Denied!!! You do not have administrative access.');

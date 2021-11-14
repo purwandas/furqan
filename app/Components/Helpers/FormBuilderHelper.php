@@ -390,15 +390,13 @@ class FormBuilderHelper
 
 	public function setDatatableColumnDefs($v = [])
 	{
-		// setDatatableColumnDefs([0 => ['className','text-center']])
+		// setDatatableColumnDefs([ ['className' => 'text-center', 'targets' => [0, 1] ] ])
+        // [['width' => '20px', 'targets' => [0]]];
+
 		$config = $this->getGlobalConfig();
 		if($config['useDatatable']){
 			if(is_array($v)){
-				$tmp = [];
-				foreach ($v as $key => $val) {
-					$tmp[] = [ $val[0] => $val[1], 'targets' => ($key + 1) ];
-				}
-				$config['setupDatatableBuilder']['columnDefs'] = $tmp;
+				$config['setupDatatableBuilder']['columnDefs'] = $v;
 				$this->config = $config;
 				return $this->getRecentArray();
 			}
