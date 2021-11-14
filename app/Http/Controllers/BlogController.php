@@ -63,16 +63,44 @@ class BlogController extends Controller
             ]
         ];
 
-        $customOrder = ['name', 'protocol', 'url', 'blog_category_id', 'language_id'];
-        $tableOrder  = ['name', 'protocol', 'url', 'blog_category', 'language_id'];
+        $additionalDatatableolumns = ['blog_category'];
+        $exceptDatatable           = ['protocol'];
+        $exceptForm                = ['protocol'];
+
+        if (isAdmin()) {
+
+            $customFormBuilder['user_id'] = [
+                'type'      => 'select2',
+                'name'      => 'user_id',
+                'text'      => 'obj.name',
+                'options'   => 'user.select2',
+                'keyTerm'   => '_name',
+                'elOptions' => [
+                    'placeholder' => 'User',
+                    'required'    => 'required',
+                ]
+            ];
+
+        } else {
+            $exceptDatatable[]           = 'user_id';
+            $customFormBuilder['user_id'] = [
+                'type'  => 'hidden',
+                'name'  => 'user_id',
+                'value' => \Auth::user()->id
+            ];
+        }
+
+
+        $customOrder = ['name', 'protocol', 'url', 'blog_category_id', 'language_id', 'user_id'];
+        $tableOrder  = ['name', 'protocol', 'url', 'blog_category', 'language_id', 'user_id'];
 
         $form_data = new FormBuilderHelper(Blog::class,$data);
         $final     = $form_data
                     ->setCustomFormBuilder($customFormBuilder)
                     ->setCustomOrderFormBuilder($customOrder)
-                    ->setExceptFormBuilderColumns(['protocol'])
-                    ->setExceptDatatableColumns(['protocol'])
-                    ->setAdditionalDatatableColumns(['blog_category'])
+                    ->setExceptFormBuilderColumns($exceptForm)
+                    ->setExceptDatatableColumns($exceptDatatable)
+                    ->setAdditionalDatatableColumns($additionalDatatableolumns)
                     ->setOrderDatatableColumns($tableOrder)
                     ->injectView(['inject/blog-form'])
                     ->get();

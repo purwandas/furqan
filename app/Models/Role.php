@@ -12,7 +12,7 @@ class Role extends BaseModel
     protected $guarded = [];
 
     const
-        ADMIN       = 1,
+        ADMIN       = [1],
         GUEST       = 2,
         ADMIN_LABEL = 'Admin';
 

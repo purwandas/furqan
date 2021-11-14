@@ -33,9 +33,8 @@ class {{modelName}} extends BaseModel
 
     public function scopeGenerateQuery($query, $filter = [])
     {
-        $query->
-            //{{defaultJoin}}{{defaultSelect}}
-            when(!empty($filter), function($q) use ($filter){
+        $query//{{defaultJoin}}{{defaultSelect}}
+            ->when(!empty($filter), function($q) use ($filter){
                 $q->filter($filter);
             });
     }

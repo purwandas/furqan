@@ -973,6 +973,12 @@ if(!function_exists('getMenuLabel')){
     }
 }
 
+if(!function_exists('isAdmin')){
+	function isAdmin() {
+		return in_array(\Auth::user()->role_id, Role::ADMIN);
+    }
+}
+
 if(!function_exists('getConfigMenu')){
 	function getConfigMenu($type) {
 		if ($type == 'icon') {

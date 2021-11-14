@@ -19,6 +19,7 @@ class Blog extends BaseModel
 			'protocol' => 'required|string',
 			'url' => 'required|string',
 			'language_id' => 'exists:languages,id',
+			'user_id' => 'exists:users,id',
 
         ];
     
@@ -32,6 +33,7 @@ class Blog extends BaseModel
 			'protocol' => 'required|string',
 			'url' => 'required|string',
 			'language_id' => 'exists:languages,id',
+			'user_id' => 'exists:users,id',
 
         ];
     
@@ -57,6 +59,16 @@ class Blog extends BaseModel
 		return '\\App\Models\Language';
 	}
 
+	public function user()
+	{
+		return $this->belongsTo($this->_user(), 'user_id');
+	}
+
+	public static function _user()
+	{
+		return '\\App\User';
+	}
+
 	public static function labelText()
 	{
 		return ['name'];
@@ -64,11 +76,21 @@ class Blog extends BaseModel
 
     public function scopeWithCategory($query)
     {
-
         $query->leftJoin('blog_has_categories', 'blog_has_categories.blog_id', 'blogs.id')
         	->leftJoin('blog_categories', 'blog_categories.id', 'blog_has_categories.blog_category_id')
         	->groupBy('blogs.id')
-        	->addSelect(\DB::raw('GROUP_CONCAT(blog_categories.name) as blog_category'));
+        	->addSelect(\DB::raw('GROUP_CONCAT(blog_categories.name SEPARATOR ", ") as blog_category'));
+	}
+
+    public function scopeWithUser($query)
+    {
+        $query->leftJoin('users', 'users.id', 'blogs.user_id')
+        	->addSelect(\DB::raw('CONCAT(users.name, " | ", users.email) as user_name'));
+	}
+
+    public function scopeLoggedUser($query)
+    {
+        $query->where('blogs.user_id', \Auth::user()->id);
 	}
 
     public function scopeGenerateQuery($query, $filter = [])
@@ -76,8 +98,13 @@ class Blog extends BaseModel
         $query->join('languages', 'languages.id', 'blogs.language_id')
 			->select('blogs.*', 'languages.name as language_name')
 			->withCategory()
-			->
-            when(!empty($filter), function($q) use ($filter){
+			->when(isAdmin(), function($q){
+				$q->withUser();
+			})
+			->when(!isAdmin(), function($q){
+				$q->loggedUser();
+			})
+			->when(!empty($filter), function($q) use ($filter){
                 $q->filter($filter);
             });
     }

@@ -444,6 +444,10 @@ $redirectRoute = @$redirectRoute ?? route($model::toKey()['route'].'.index')
 	function addModal{{$model::toKey()['class']}}() {
         $('#form{{$model::toKey()['class']}}').prop('action','{{ route($model::toKey()['route'].'.create') }}');
         clear{{$model::toKey()['class']}}Input();
+
+        setTimeout(function() {
+	        {!!@$setFocus!!}
+        }, 500);
         $('#_method').remove();
     }
 
